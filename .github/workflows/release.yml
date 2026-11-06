@@ -1,0 +1,22 @@
+# Publishes the companion PDF as a GitHub Release asset when a tag like "2026-27" is pushed.
+# The release is created with the workflow token, so it is published by github-actions[bot]
+# (no personal account appears on the Releases page). GitHub counts every download of the asset.
+name: Publish companion release
+on:
+  push:
+    tags: ["20*"]
+permissions:
+  contents: write
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Create release with the PDF attached
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          gh release create "$TAG" release/*.pdf \
+            --title "Free Digital Companion — ${TAG} edition" \
+            --notes "Free fillable PDF companion for the Special Education Teacher IEP & 504 Caseload Planner by Sena San. Download page: https://senasanlabs.github.io/sped-caseload-planner/"
